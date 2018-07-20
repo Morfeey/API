@@ -9,7 +9,11 @@
 namespace API\REST\Versions\Two;
 
 
-class VersionInfo
+use API\Libraries\HeaderConfiguration\VersionInfoTemplate;
+
+class VersionInfo extends VersionInfoTemplate
 {
+    public $Version = 0.7;
+    public $Readiness = false;
 
 }

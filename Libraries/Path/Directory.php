@@ -22,6 +22,10 @@ class Directory
 
     public $Directory;
 
+    public static function getDocumentRoot () {
+        return $_SERVER["DOCUMENT_ROOT"];
+    }
+
     /**
      * Search Directories  (opening {a,b,c}, for search on 'a'|'b'|'c')
      * @param string|* $Pattern

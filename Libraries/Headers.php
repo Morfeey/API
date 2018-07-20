@@ -21,8 +21,14 @@ class Headers
     public $Language;
     public $Readiness;
 
+    public function addToSend () {
 
-    public function getFullList(): array {
+    }
+    public function send () {
+
+    }
+
+    public function getFullList (): array {
         return getallheaders();
     }
 
@@ -33,7 +39,7 @@ class Headers
 
         foreach ($All as $key=>$value) {
             $strKey = new Str($key);
-            $key = str_replace("-", "_", $strKey->UpFirstCharsWords(null,["_", "-"]));
+            $key = str_replace("-", "_", $strKey->UpFirstCharsWords(["_", "-"])->String );
             $AllCorrect[$key] = $value;
         }
 

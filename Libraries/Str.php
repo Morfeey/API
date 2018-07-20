@@ -12,6 +12,8 @@ namespace API\Libraries;
 class Str
 {
     public $String;
+    public $Words;
+
 
     public function InStr(string $Needle): bool
     {
@@ -20,17 +22,33 @@ class Str
         return $result;
     }
 
-    public function UpFirstCharWord(string $Str = null) :string
-    {
+    private function UpFirstCharWrd (string $Str = null):string {
         $str = (!is_null($Str)) ? $Str : $this->String;
         $result = str_replace($str[0], strtoupper($str[0]), $str);
         return $result;
     }
 
-    public function UpFirstCharsWords(string $String = null, array $AdditionalCharsSeparators = null) :string
+    public function UpFirstCharWord() :self
+    {
+        $this->String = $this->UpFirstCharWrd($this->String);
+        return $this;
+    }
+
+    public function ExplodeToWords (string $Pattern = "(\s)|[A-ZА-Я]|[~\!\.\-\_\/\=\+]", string $flags = "mu"): self {
+        $str = $this->String;
+        $this->Words = preg_split("/$Pattern/$flags", $str);
+        return $this;
+    }
+
+    public function SpaceOnWords ():self {
+        $this->String = implode(" ", $this->Words);
+        return $this;
+    }
+
+    public function UpFirstCharsWords(array $AdditionalCharsSeparators = null): self
     {
 
-        $str = (!is_null($String)) ? $String : $this->String;
+        $str = $this->String;
         $CharsSeparators = [" ", "_"];
 
         if (!is_null($AdditionalCharsSeparators)) {
@@ -45,11 +63,26 @@ class Str
         $explode = preg_split($Pattern, $str);
 
         foreach ($explode as $word) {
-            $str = str_replace($word, $this->UpFirstCharWord($word), $str);
+            $str = str_replace($word, $this->UpFirstCharWrd($word), $str);
         }
 
-        return $str;
+        $this->String = $str;
 
+        return $this;
+
+    }
+
+    public function Clean (array $CharList):self {
+        foreach ($CharList as $Char) {
+            $this->String = str_replace($Char, "", $this->String);
+        }
+        return $this;
+    }
+
+    public function Replace (array $CharListSearch, string $Replace) :self {
+        foreach ($CharListSearch as $Char) {
+            $this->String = str_replace($Char, $Replace, $this->String);
+        }
     }
 
     public function IntToWord($num = '') :string
@@ -136,6 +169,7 @@ class Str
         }
         return '';
     }
+
     public function FloatToWord (float $num = null): string {
         $num = (!is_null($num)) ? $num : $this->String;
         $split = preg_split("/[(\.)(\,)]/", (string)$num);
@@ -148,6 +182,9 @@ class Str
         $result = rtrim($result, "And ");
         return $result;
     }
+
+
+
 
     public function __construct(string $String)
     {
