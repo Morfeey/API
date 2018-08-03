@@ -15,68 +15,74 @@ class Str
     public $Words;
 
 
-    public function InStr(string $Needle): bool
+    public function in(string $Needle): bool
     {
         $str = stristr($this->String, $Needle);
         $result = (strlen($str) === 0 || !$str) ? false : true;
         return $result;
     }
 
-    private function UpFirstCharWrd (string $Str = null):string {
+    private function firstCharUpCustom(string $Str = null): string
+    {
         $str = (!is_null($Str)) ? $Str : $this->String;
         $result = str_replace($str[0], strtoupper($str[0]), $str);
         return $result;
     }
-    private function LowFirstCharWrd (string $Str = null):string {
+
+    private function firstCharLowCustom(string $Str = null): string
+    {
         $str = (!is_null($Str)) ? $Str : $this->String;
         $result = str_replace($str[0], strtolower($str[0]), $str);
         return $result;
     }
 
-    public function UpFirstCharWord() :self
+    public function firstCharUp(): self
     {
-        $this->String = $this->UpFirstCharWrd($this->String);
+        $this->String = $this->firstCharUpCustom($this->String);
         return $this;
     }
 
-    public function ExplodeToWords (string $Pattern = "(\s)|[A-ZА-Я]|[~\!\.\-\_\/\=\+\,\?\\\+\-]", string $flags = "mu"): self {
+    public function explodeToWords(string $Pattern = "(\s)|[A-ZА-Я]|[~\!\.\-\_\/\=\+\,\?\\\+\-]", string $flags = "mu"): self
+    {
         $str = $this->String;
         $this->Words = preg_split("/$Pattern/$flags", $str);
         return $this;
     }
 
-    public function ImplodeWords (int $ConstIStr = 1, $CustomSeparator = null): self {
+    public function implodeWords(int $ConstIStr = 1, $CustomSeparator = null): self
+    {
         $result = "";
 
         if ($ConstIStr == IStr::UpFirstChar) {
             foreach ($this->Words as $word) {
-                $result .= $this->UpFirstCharWrd($word);
+                $result .= $this->firstCharUpCustom($word);
             }
-        }else if ($ConstIStr == IStr::UpFistCharAndLowOther){
+        } else if ($ConstIStr == IStr::UpFistCharAndLowOther) {
             foreach ($this->Words as $word) {
-                $result .= $this->UpFirstCharWrd(strtolower($word));
+                $result .= $this->firstCharUpCustom(strtolower($word));
             }
         } else if ($ConstIStr == IStr::LowFirstChar) {
             foreach ($this->Words as $word) {
-                $result .= $this->LowFirstCharWrd($word);
+                $result .= $this->firstCharLowCustom($word);
             }
-        }else if ($ConstIStr == IStr::LowFirstCharAndUpOther) {
+        } else if ($ConstIStr == IStr::LowFirstCharAndUpOther) {
             foreach ($this->Words as $word) {
-                $result .= $this->LowFirstCharWrd(strtoupper($word));
+                $result .= $this->firstCharLowCustom(strtoupper($word));
             }
-        }else if ($ConstIStr == IStr::Custom && $CustomSeparator!==null) {
+        } else if ($ConstIStr == IStr::Custom && $CustomSeparator !== null) {
             $result = implode($CustomSeparator, $this->Words);
         }
         $this->String = $result;
         return $this;
     }
 
-    public function SpaceOnWords ():self {
+    public function SpaceOnWords(): self
+    {
         $this->String = implode(" ", $this->Words);
         return $this;
     }
 
-    public function UpFirstCharsWords(array $AdditionalCharsSeparators = null): self
+    public function fistCharUpAllWords(array $AdditionalCharsSeparators = null): self
     {
 
         $str = $this->String;
@@ -94,7 +100,7 @@ class Str
         $explode = preg_split($Pattern, $str);
 
         foreach ($explode as $word) {
-            $str = str_replace($word, $this->UpFirstCharWrd($word), $str);
+            $str = str_replace($word, $this->firstCharUpCustom($word), $str);
         }
 
         $this->String = $str;
@@ -103,27 +109,27 @@ class Str
 
     }
 
-    public function Clean (array $CharList):self {
+    public function cleaning(array $CharList): self
+    {
         foreach ($CharList as $Char) {
             $this->String = str_replace($Char, "", $this->String);
         }
         return $this;
     }
 
-    public function Replace (array $CharListSearch, string $Replace) :self {
+    public function replace(array $CharListSearch, string $Replace): self
+    {
         foreach ($CharListSearch as $Char) {
             $this->String = str_replace($Char, $Replace, $this->String);
         }
     }
 
-    public function IntToWord($num = '') :string
+    public function intToWord($num = ''): string
     {
-        $num = ($num!='') ? ( string )(( int )$num):  ((int)$this->String);
+        $num = ($num != '') ? ( string )(( int )$num) : ((int)$this->String);
 
-        $trim_all = function ( $str , $what = NULL , $with = ' ' )
-        {
-            if( $what === NULL )
-            {
+        $trim_all = function ($str, $what = NULL, $with = ' ') {
+            if ($what === NULL) {
                 //  Character      Decimal      Use
                 //  "\0"            0           Null Character
                 //  "\t"            9           Tab
@@ -132,15 +138,15 @@ class Str
                 //  "\r"           13           New Line in Mac
                 //  " "            32           Space
 
-                $what   = "\\x00-\\x20";    //all white-spaces and control chars
+                $what = "\\x00-\\x20";    //all white-spaces and control chars
             }
 
-            return trim( preg_replace( "/[".$what."]+/" , $with , $str ) , $what );
+            return trim(preg_replace("/[" . $what . "]+/", $with, $str), $what);
         };
-        $str_replace_last = function( $search , $replace , $str ) {
-            if( ( $pos = strrpos( $str , $search ) ) !== false ) {
-                $search_length  = strlen( $search );
-                $str    = substr_replace( $str , $replace , $pos , $search_length );
+        $str_replace_last = function ($search, $replace, $str) {
+            if (($pos = strrpos($str, $search)) !== false) {
+                $search_length = strlen($search);
+                $str = substr_replace($str, $replace, $pos, $search_length);
             }
             return $str;
         };
@@ -201,20 +207,19 @@ class Str
         return '';
     }
 
-    public function FloatToWord (float $num = null): string {
+    public function floatToWord(float $num = null): string
+    {
         $num = (!is_null($num)) ? $num : $this->String;
         $split = preg_split("/[(\.)(\,)]/", (string)$num);
         $result = "";
         foreach ($split as $Item) {
-            $Item = $this->IntToWord((string)$Item);
+            $Item = $this->intToWord((string)$Item);
             $result .= "$Item And ";
         }
 
         $result = rtrim($result, "And ");
         return $result;
     }
-
-
 
 
     public function __construct(string $String)

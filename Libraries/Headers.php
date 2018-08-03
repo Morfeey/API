@@ -11,7 +11,6 @@ namespace API\Libraries;
 include_once "Str.php";
 include_once "Path/Directory.php";
 
-use API\Libraries\HeaderConfiguration\Version;
 
 class Headers
 {
@@ -39,7 +38,7 @@ class Headers
 
         foreach ($All as $key=>$value) {
             $strKey = new Str($key);
-            $key = str_replace("-", "_", $strKey->UpFirstCharsWords(["_", "-"])->String );
+            $key = str_replace("-", "_", $strKey->fistCharUpAllWords(["_", "-"])->String );
             $AllCorrect[$key] = $value;
         }
 

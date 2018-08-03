@@ -34,8 +34,8 @@ class Server
 //        foreach ($_SERVER as $field => $value) {
 ////            $string = new Str(strtolower($field));
 ////            $field = $string->
-////            ExplodeToWords()->
-////            ImplodeWords()->
+////            explodeToWords()->
+////            implodeWords()->
 ////            String;
 ////            if (!in_array($field, $KeysVars)) {
 ////                $field = "NEW_" . $field;

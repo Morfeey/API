@@ -49,7 +49,7 @@ class Headers
             $NewValue = $HeadersLowerKeys[strtolower($Item)];
             if ($NewValue!="" && !is_null($NewValue)) {
                 $str = new Str($Item);
-                $Item = $str->UpFirstCharsWords()->String;
+                $Item = $str->fistCharUpAllWords()->String;
                 $this->$Item = $NewValue;
             }
 

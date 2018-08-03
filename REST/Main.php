@@ -12,7 +12,7 @@ namespace API\REST {
 
             $this->Headers = new Headers();
             $str = new Str("");
-            $VersionWord = str_replace(" ", "", $str->IntToWord( $this->Headers->Version ));
+            $VersionWord = str_replace(" ", "", $str->intToWord( $this->Headers->Version ));
             $VersionAPI = "API\\REST\\Versions\\$VersionWord\\Main";
             $ActualClassAPI = new $VersionAPI();
             print $ActualClassAPI->Result();
