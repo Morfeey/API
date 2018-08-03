@@ -9,7 +9,6 @@
 namespace API\Libraries\Path;
 
 use API\Libraries\Path\Subject\SearchOption;
-use Api\Libraries\Str;
 
 include_once "File.php";
 include_once "Subject/SearchOption.php";
@@ -22,7 +21,11 @@ class Directory
 
     public $Directory;
 
-    public static function getDocumentRoot () {
+    /** DOCUMENT_ROOT
+     * @return string
+     */
+    public static function getDocumentRoot(): string
+    {
         return $_SERVER["DOCUMENT_ROOT"];
     }
 
@@ -33,17 +36,17 @@ class Directory
      * @return Directory[]
      * @throws \Exception
      */
-    public function GetDirectories(string $Pattern = "*", SearchOption $searchOption = null): array
+    public function getDirectories(string $Pattern = "*", SearchOption $searchOption = null): array
     {
         $searchOption = (is_null($searchOption)) ? SearchOption::Current() : $searchOption;
         $Cur = $this;
-
         $GetDirectories = function (string $Directory) use (&$GetDirectories, $Pattern, $searchOption, $Cur) {
             $result = [];
-            $Directory = $this->GetLastSlash($Directory);
+            $Directory = $this->getLastSlashCustom($Directory);
             $List = glob($Directory . $Pattern, GLOB_BRACE | GLOB_MARK | GLOB_ONLYDIR);
 
             foreach ($List as $Item) {
+                $Item = $this->deleteLastSlashCustom($Item);
                 array_push($result, $Item);
                 $Temp = $GetDirectories($Item);
                 if ($searchOption->IsRecurse && count($Temp) != 0) {
@@ -56,28 +59,36 @@ class Directory
 
             return $result;
         };
-
         $result = $GetDirectories($this->Directory);
 
         return $result;
     }
 
-    public function upLevel () {
+    /** exit to the parent directory
+     * @return Directory
+     */
+    public function parent(): self
+    {
         $ListLevels = explode("/", $this->Directory);
-        unset($ListLevels[count($ListLevels)-1]);
-        $result ="";
+        unset($ListLevels[count($ListLevels) - 1]);
+        $result = "";
         foreach ($ListLevels as $level) {
-            $result .=$level."/";
+            $result .= $level . "/";
         }
 
-        $this->Directory = $this->DeleteLastSlash($result);
-
+        $this->Directory = $this->deleteLastSlashCustom($result);
         return $this;
     }
 
-    public function merge (string $MergedDirectory, string $Directory = null) {
+    /** merging of paths
+     * @param string $MergedDirectory
+     * @param string|null $Directory
+     * @return Directory
+     */
+    public function merge(string $MergedDirectory, string $Directory = null): self
+    {
         $Directory = (is_null($Directory)) ? $this->Directory : $Directory;
-        $this->Directory = $this->GetLastSlash($Directory).$MergedDirectory;
+        $this->Directory = $this->getLastSlashCustom($Directory) . $MergedDirectory;
         return $this;
     }
 
@@ -87,13 +98,13 @@ class Directory
      * @param SearchOption|SearchOption::Current $searchOption
      * @return File[]
      */
-    public function GetFiles(string $Pattern = "*", SearchOption $searchOption = null): array
+    public function getFiles(string $Pattern = "*", SearchOption $searchOption = null): array
     {
         $searchOption = (is_null($searchOption)) ? SearchOption::Current() : $searchOption;
 
         $GetFiles = function (string $Directory) use (&$GetFiles, $Pattern, $searchOption) {
             $result = [];
-            $Dir = $this->GetLastSlash($Directory);
+            $Dir = $this->getLastSlashCustom($Directory);
 
             $Directories = glob("$Dir*", GLOB_ONLYDIR | GLOB_MARK);
             $Files = function () use ($Dir, $Pattern) {
@@ -128,17 +139,24 @@ class Directory
         return $result;
     }
 
-    /**
+    /** Directory Info
      * @param string|null $DateFormat
      * @return Info
      * @throws \Exception
      */
-    public function GetInfo(string $DateFormat = null): Info
+    public function getInfo(string $DateFormat = null): Info
     {
         return new Info($this->Directory, $DateFormat);
     }
 
-    public function GetLastSlash (string $Directory = null) {
+    public function getLastSlash(): self
+    {
+        $this->Directory = $this->getLastSlashCustom($this->Directory);
+        return $this;
+    }
+
+    public function getLastSlashCustom(string $Directory = null)
+    {
         $Directory = (is_null($Directory)) ? $this->Directory : $Directory;
         $Directory = str_replace("\\", "/", $Directory);
         $Directory = rtrim($Directory, "/");
@@ -146,7 +164,14 @@ class Directory
         return $result;
     }
 
-    public function DeleteLastSlash (string $Directory = null) {
+    public function deleteLastSlash(): self
+    {
+        $this->Directory = $this->deleteLastSlashCustom($this->Directory);
+        return $this;
+    }
+
+    public function deleteLastSlashCustom(string $Directory = null)
+    {
         $Directory = (is_null($Directory)) ? $this->Directory : $Directory;
         $Directory = str_replace("\\", "/", $Directory);
         $result = rtrim($Directory, "/");
@@ -163,9 +188,9 @@ class Directory
         $params = func_get_args();
         if (!is_null($params) && count($params) != 0) {
             foreach ($params as $ItemDirectory) {
-                $this->Directory .= $this->GetLastSlash($ItemDirectory);
+                $this->Directory .= $this->getLastSlashCustom($ItemDirectory);
             }
-            $this->Directory = $this->DeleteLastSlash($this->Directory);
+            $this->Directory = $this->deleteLastSlashCustom($this->Directory);
         } else {
             $print = print_r($params, true);
             throw new \Exception("Count parameters is empty: $print", 601);

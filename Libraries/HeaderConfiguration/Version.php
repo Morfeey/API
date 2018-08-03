@@ -25,12 +25,17 @@ class Version
         $this->Headers = new Headers();
         $this->Version = $this->getCurrent();
     }
-    /* Directory Version */
-    private function getDirectoryVersions (): string {
+
+    /** Directory Version
+     * @return string
+     * @throws \Exception
+     */
+    private function getDirectoryVersions(): string
+    {
         $Directory = new Directory(__DIR__);
         $result = $Directory
-            ->upLevel()
-            ->upLevel()
+            ->parent()
+            ->parent()
             ->merge($this->Headers->APIName)
             ->merge("Versions")->Directory;
         return $result;
@@ -40,14 +45,15 @@ class Version
      * @return array Objects VersionInfo
      * @throws \Exception
      */
-    private function getListVersions (): array {
+    private function getListVersions(): array
+    {
         $Directory = new Directory($this->getDirectoryVersions());
-        $VersionDirectories = $Directory->GetDirectories("*", SearchOption::Current());
+        $VersionDirectories = $Directory->getDirectories("*", SearchOption::Current());
         $VersionInfoFiles = [];
 
         foreach ($VersionDirectories as $directory) {
             $Directory = new Directory($directory);
-            $VersionInfo = $Directory->GetFiles("VersionInfo.php", SearchOption::Current());
+            $VersionInfo = $Directory->getFiles("VersionInfo.php", SearchOption::Current());
             $VersionInfoFiles = array_merge($VersionInfoFiles, $VersionInfo);
         }
 
@@ -72,23 +78,33 @@ class Version
         return $result;
     }
 
-    public function getLastVersion (): float {
+    /**
+     * @return float
+     * @throws \Exception
+     */
+    public function getLastVersion(): float
+    {
         $result = 0;
         $versions = $this->getListVersions();
         foreach ($versions as $version) {
-            $result = ($version->Version> $result) ? $version->Version : $result;
+            $result = ($version->Version > $result) ? $version->Version : $result;
         }
         return $result;
     }
 
-    public function getDirectoryCurrentVersion() {
+    /**
+     * @return string
+     * @throws \Exception
+     */
+    public function getDirectoryCurrentVersion(): string
+    {
         $Version = $this->Version;
         $Versions = $this->getListVersions();
         foreach ($Versions as $version) {
-            if ($version->Version == $Version){
+            if ($version->Version == $Version) {
                 $class = get_class($version);
                 $explode = explode("\\", $class);
-                $LastElement = count($explode)-1;
+                $LastElement = count($explode) - 1;
                 unset($explode[$LastElement]);
                 $Directory = new Directory(Directory::getDocumentRoot(), implode("/", $explode));
                 $result = $Directory->Directory;
@@ -98,18 +114,22 @@ class Version
         return $result;
     }
 
-    public function getCurrent () {
+    /**
+     * @return array|float|int
+     */
+    public function getCurrent(): float
+    {
         $result = 0;
         $HeaderVersion = $this->Headers->Version;
-        $VersionCorrect = function ()use ($HeaderVersion) {
+        $VersionCorrect = function () use ($HeaderVersion) {
             $Versions = $this->getListVersions();
             $result = $Versions;
             foreach ($Versions as $version) {
                 $Version = $version->Version;
-                $result["$Version"] = (float) $Version - (float) $HeaderVersion;
+                $result["$Version"] = (float)$Version - (float)$HeaderVersion;
             }
             asort($result);
-            $result = (float) array_keys($result)[0];
+            $result = (float)array_keys($result)[0];
             return $result;
         };
         $result = (is_string($HeaderVersion) && strtolower($HeaderVersion) === "last") ? $this->getLastVersion() : $VersionCorrect();

@@ -54,7 +54,7 @@ class Info{
                 $this->Size = (int) $Info[7];
             }else if (is_dir($Object)) {
                 $Directory = new Directory($Object);
-                foreach ($Directory->GetFiles("*", SearchOption::Recurse()) as $file) {
+                foreach ($Directory->getFiles("*", SearchOption::Recurse()) as $file) {
                     $this->Size += (int) stat($file)[7];
                 }
             }

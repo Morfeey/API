@@ -21,12 +21,12 @@ class File
     public function getNameSpaceAndClassOnName () {
         $ReplacedDirectory = str_replace($_SERVER["DOCUMENT_ROOT"], "", $this->Directory);
         $Directory = new Directory($ReplacedDirectory);
-        $ReplacedDirectory = $Directory->GetLastSlash();
+        $ReplacedDirectory = $Directory->getLastSlashCustom();
         $ReplacedDirectory = str_replace("/", "\\", $ReplacedDirectory);
         $result = $ReplacedDirectory.$this->NameWithoutExtension;
         return $result;
     }
-    public function GetInfo ($DateFormat = null): Info {
+    public function getInfo ($DateFormat = null): Info {
         return new Info($this->File, $DateFormat);
     }
     public function __construct(string $File) {

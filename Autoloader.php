@@ -24,12 +24,12 @@ class Autoloader
      * @return array
      * @throws \Exception
      */
-    private function GetFiles(): array
+    private function getFiles(): array
     {
         $result = [];
         foreach ($this->ListLoader as $LoadItem) {
             $Directory = new Directory(__DIR__, $LoadItem);
-            $files = $Directory->GetFiles("*.php", SearchOption::Recurse());
+            $files = $Directory->getFiles("*.php", SearchOption::Recurse());
             $result = array_merge($result, $files);
         }
         return $result;
@@ -47,7 +47,7 @@ class Autoloader
             "Libraries",
             $Headers->APIName
         ], \APIDefault::ProjectFilesOnAutoloader);
-        $files = $this->GetFiles();
+        $files = $this->getFiles();
         foreach ($files as $file) {
             include_once $file;
         }

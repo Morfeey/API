@@ -27,6 +27,11 @@ class Str
         $result = str_replace($str[0], strtoupper($str[0]), $str);
         return $result;
     }
+    private function LowFirstCharWrd (string $Str = null):string {
+        $str = (!is_null($Str)) ? $Str : $this->String;
+        $result = str_replace($str[0], strtolower($str[0]), $str);
+        return $result;
+    }
 
     public function UpFirstCharWord() :self
     {
@@ -34,9 +39,35 @@ class Str
         return $this;
     }
 
-    public function ExplodeToWords (string $Pattern = "(\s)|[A-ZА-Я]|[~\!\.\-\_\/\=\+]", string $flags = "mu"): self {
+    public function ExplodeToWords (string $Pattern = "(\s)|[A-ZА-Я]|[~\!\.\-\_\/\=\+\,\?\\\+\-]", string $flags = "mu"): self {
         $str = $this->String;
         $this->Words = preg_split("/$Pattern/$flags", $str);
+        return $this;
+    }
+
+    public function ImplodeWords (int $ConstIStr = 1, $CustomSeparator = null): self {
+        $result = "";
+
+        if ($ConstIStr == IStr::UpFirstChar) {
+            foreach ($this->Words as $word) {
+                $result .= $this->UpFirstCharWrd($word);
+            }
+        }else if ($ConstIStr == IStr::UpFistCharAndLowOther){
+            foreach ($this->Words as $word) {
+                $result .= $this->UpFirstCharWrd(strtolower($word));
+            }
+        } else if ($ConstIStr == IStr::LowFirstChar) {
+            foreach ($this->Words as $word) {
+                $result .= $this->LowFirstCharWrd($word);
+            }
+        }else if ($ConstIStr == IStr::LowFirstCharAndUpOther) {
+            foreach ($this->Words as $word) {
+                $result .= $this->LowFirstCharWrd(strtoupper($word));
+            }
+        }else if ($ConstIStr == IStr::Custom && $CustomSeparator!==null) {
+            $result = implode($CustomSeparator, $this->Words);
+        }
+        $this->String = $result;
         return $this;
     }
 
