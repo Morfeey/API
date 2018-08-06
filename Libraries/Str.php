@@ -42,6 +42,16 @@ class Str
         return $this;
     }
 
+    public function toUp (): self {
+        $this->String = strtoupper($this->String);
+        return $this;
+    }
+
+    public function toLow (): self {
+        $this->String = strtolower($this->String);
+        return $this;
+    }
+
     public function explodeToWords(string $Pattern = "(\s)|[A-ZА-Я]|[~\!\.\-\_\/\=\+\,\?\\\+\-]", string $flags = "mu"): self
     {
         $str = $this->String;
@@ -122,6 +132,7 @@ class Str
         foreach ($CharListSearch as $Char) {
             $this->String = str_replace($Char, $Replace, $this->String);
         }
+        return $this;
     }
 
     public function intToWord($num = ''): string

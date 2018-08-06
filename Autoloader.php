@@ -11,10 +11,14 @@ namespace API;
 include_once "config.php";
 include_once "Libraries/Path/Directory.php";
 include_once "Libraries/Path/Subject/SearchOption.php";
+include_once "Libraries/Headers.php";
+include_once "Libraries/HeaderConfiguration/Head.php";
+include_once "Libraries/Subject/Header.php";
+include_once "Libraries/Str.php";
 
+use API\Libraries\Headers;
 use API\Libraries\Path\Directory;
 use API\Libraries\Path\Subject\SearchOption;
-use API\REST\Headers;
 
 class Autoloader
 {
@@ -42,7 +46,7 @@ class Autoloader
      */
     public function __construct()
     {
-        $Headers = new \API\Libraries\Headers();
+        $Headers = new Headers();
         $this->ListLoader = array_merge([
             "Libraries",
             $Headers->APIName

@@ -80,7 +80,7 @@ class Version
 
     /**
      * @return float
-     * @throws \Exception
+     * @throws \Exception //
      */
     public function getLastVersion(): float
     {
@@ -123,13 +123,26 @@ class Version
         $HeaderVersion = $this->Headers->Version;
         $VersionCorrect = function () use ($HeaderVersion) {
             $Versions = $this->getListVersions();
-            $result = $Versions;
+            //$result = $Versions;
             foreach ($Versions as $version) {
                 $Version = $version->Version;
                 $result["$Version"] = (float)$Version - (float)$HeaderVersion;
             }
             asort($result);
-            $result = (float)array_keys($result)[0];
+
+            $last_difference = null;
+            $last_version = null;
+            foreach ($result as $version=>$difference) {
+                $difference_plus = (float)str_replace("-", "", $difference);
+                $last_difference = (is_null($last_difference)) ? $difference_plus : $last_difference;
+                $last_version = (is_null($last_version)) ? $version : $last_version;
+                if ($difference_plus<$last_difference) {
+                    $last_difference = $difference_plus;
+                    $last_version = $version;
+                }
+            }
+
+            $result = (float)$last_version;
             return $result;
         };
         $result = (is_string($HeaderVersion) && strtolower($HeaderVersion) === "last") ? $this->getLastVersion() : $VersionCorrect();

@@ -8,9 +8,6 @@
 
 namespace API\REST;
 use API\Libraries\Str;
-use API\REST\Configuration\HeadersCorrections\Readiness;
-use API\REST\Configuration\HeadersCorrections\Subject\Header;
-use API\REST\Configuration\HeadersCorrections\Version;
 
 
 class Headers
