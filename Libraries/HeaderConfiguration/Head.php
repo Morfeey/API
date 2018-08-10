@@ -21,4 +21,18 @@ class Head
 
         return $result;
     }
+    public function validList (array $ListHeaders) {
+        $result = [];
+        foreach ($ListHeaders as $value) {
+            $result[] = $this->valid($value);
+        }
+        return $result;
+    }
+    public function validListKeys(array $ListHeaders):array {
+        $result= [];
+        foreach ($ListHeaders as $key=>$value) {
+            $result[$this->valid($key)] = $value;
+        }
+        return $result;
+    }
 }

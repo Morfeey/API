@@ -8,15 +8,16 @@
 
 namespace API\Libraries;
 
+use API\Libraries\HeaderConfiguration\Head;
 use API\Libraries\Subject\Header;
 
-include_once __DIR__."/Subject/Header.php";
+include_once __DIR__ . "/Subject/Header.php";
 include_once "HeaderConfiguration/Head.php";
 include_once "Str.php";
 include_once "Path/Directory.php";
 
 
-class Headers
+class Headers extends Head
 {
     public $APIName;
     public $Version;
@@ -63,20 +64,28 @@ class Headers
         return getallheaders();
     }
 
-    public function getUserAssigned(): array
+    public function getUserAssigned(bool $setDefaultValues = true): Headers
     {
         $all = $this->getFullList();
+        $all = $this->validListKeys($all);
         $needle = $this->getCleanedClassVars();
+        $needle = $this->validList($needle);
+        if ($setDefaultValues) {
+            $ReflectionClass = new \ReflectionClass("APIDefault");
+            $defaultValues = $this->validListKeys($ReflectionClass->getConstants());
+        }
 
-//        foreach ($needle as $key=>$value) {
-//            if (key_exists($key, $all)) {
-//
-//            }
-//        }
+        $result = new self();
 
-        return $needle;
+        foreach ($needle as $keyNeedle) {
+            if (key_exists($keyNeedle, $all)) {
+                $result->$keyNeedle = $all[$keyNeedle];
+            }else if (!key_exists($keyNeedle, $all) && $setDefaultValues && key_exists($keyNeedle, $defaultValues)) {
+                $result->$keyNeedle = $defaultValues[$keyNeedle];
+            }
+        }
+        return $result;
     }
-
 
     /**
      * Prepare to send default values
