@@ -12,6 +12,7 @@ use API\Libraries\HeaderConfiguration\Head;
 use API\Libraries\Subject\Header;
 
 include_once __DIR__ . "/Subject/Header.php";
+include_once __DIR__."/Event.php";
 include_once "HeaderConfiguration/Head.php";
 include_once "Str.php";
 include_once "Path/Directory.php";
@@ -56,6 +57,7 @@ class Headers extends Head
         foreach ($this->ToSend as $header) {
             \header($header->getKey() . ":" . $header->getValue());
         }
+        Event::doAction("HeadersSend", ["hellowold"]);
         return $this;
     }
 
@@ -140,6 +142,5 @@ class Headers extends Head
         $this
             ->setValues()
             ->prepareToSend();
-
     }
 }

@@ -26,8 +26,9 @@ class Versions
 
     public function __construct(Headers $headers = null)
     {
-        $this->Headers = (is_null($headers)) ? new Headers() : $headers;
-        $this->Version = $this->getCurrent();
+        $Headers = new Headers();
+        $this->Headers = (is_null($headers)) ? $Headers->getUserAssigned() : $headers;
+        $this->Version = $this->getCurrentOnFloat();
     }
 
     /** Directory Version
@@ -49,7 +50,7 @@ class Versions
      * @return array Objects Version
      * @throws \Exception
      */
-    public function getList(): array
+    private function getList(): array
     {
         $DirectoryVersion = $this->getDirectoryVersions();
         $DirectoryVersions = new Directory($DirectoryVersion);
@@ -142,7 +143,7 @@ class Versions
     }
 
     /**
-     * @return array|float|int
+     * @return float
      */
     public function getCurrentOnFloat(): float
     {

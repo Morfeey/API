@@ -13,8 +13,6 @@ use API\Libraries\Path\Subject\SearchOption;
 include_once "File.php";
 include_once "Subject/SearchOption.php";
 
-///include_once "../Str.php";
-
 
 class Directory
 {

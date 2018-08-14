@@ -17,6 +17,7 @@ include_once "Libraries/HeaderConfiguration/Head.php";
 include_once "Libraries/Subject/Header.php";
 include_once "Libraries/Str.php";
 
+use API\Libraries\Event;
 use API\Libraries\HeaderConfiguration\Version;
 use API\Libraries\HeaderConfiguration\Versions;
 use API\Libraries\Headers;
@@ -31,7 +32,6 @@ class Autoloader
     private $Versions;
 
     private $PatternFiles = "*.php";
-
 
     /**
      * @return array
@@ -84,11 +84,7 @@ class Autoloader
 
         ], \APIDefault::ProjectFilesOnAutoloader);
         $files = $this->getFiles();
-        foreach ($files as $file) {
-            print "$file<br>";
-            include_once $file;
-        }
-
+        $this->includeFiles($files);
     }
 
 }

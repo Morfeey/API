@@ -55,7 +55,11 @@ class Str
     public function explodeToWords(string $Pattern = "(\s)|[A-ZА-Я]|[~\!\.\-\_\/\=\+\,\?\\\+\-]", string $flags = "mu"): self
     {
         $str = $this->String;
-        $this->Words = preg_split("/$Pattern/$flags", $str);
+        $Words = preg_split("/$Pattern/$flags", $str, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY | PREG_SPLIT_OFFSET_CAPTURE);
+        foreach ($Words as $word) {
+            $word = $str[$word[1]-1].$word[0];
+            $this->Words[] =  trim($word);
+        }
         return $this;
     }
 
@@ -88,6 +92,7 @@ class Str
 
     public function SpaceOnWords(): self
     {
+        $this->explodeToWords();
         $this->String = implode(" ", $this->Words);
         return $this;
     }
